@@ -11,12 +11,34 @@ export default class Board extends Component {
         //3.insert new arr into parents arr
         this.props.setParentsState({squares:squareList, nextPlayer:!this.props.nextPlayer})
     }
+     findWinner = (squares) => {
+        const moves = [
+          [0, 1, 2],
+          [3, 4, 5],
+          [6, 7, 8],
+          [0, 3, 6],
+          [1, 4, 7],
+          [2, 5, 8],
+          [0, 4, 8],
+          [2, 4, 6],
+        ];
+        for (let i = 0; i < moves.length; i++) {
+          const [a, b, c] = moves[i];
+          if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+             return squares[a];
+      }
+    }
+    return null;
+      }
   render() {
       let status='';
       status= this.props.nextPlayer?`O`:`X`;
+     
+      const winner = findWinner(this.props.squares);
+
     return (
       <div>
-              <h5>Next Player:{status}</h5>
+              <h5>Next Player: {status}</h5>
 
         <div style={{ display: "flex" }}>
           <Square value={this.props.squares[0]} onClick={() => this.onSquareClicked(0)} />
