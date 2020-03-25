@@ -1,40 +1,130 @@
-import React, {Component} from 'react';
-// import logo from './logo.svg';
-import './App.css';
-import Board from './components/Board'
+import React, { Component } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Button } from "react-bootstrap";
+import "./App.css";
+import FacebookLogin from "react-facebook-login";
+import Board from "./components/Board";
+
 class App extends Component {
-  constructor(props){
-    super(props)
-    this.state={
-      squares: ['', '', ' ','', '', ' ','', '', ''],
-      nextPlayer:false
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      squares: ["", "", "", "", "", "", "", "", ""],
+      nextPlayer: false,
+      history: [],
+      user:''
+    };
   }
 
-  setParentsState = (obj) => {
-this.setState(obj)
+  setParentsState = obj => {
+    this.setState(obj);
   };
 
-  checkWinner(){
-    const moves = [
-      [0, 1, 2],
-      [0, 3, 6],
-      [0, 4, 8],
-      [1, 4, 7], 
-      [2, 4, 6],
-      [2, 4, 8],
-      [6, 7, 8],
-      [3, 4, 5]
-    ]
+  showHistory = (item, idx) => {
+    this.setState({
+      squares: item.squares,
+      nextPlayer: item.nextPlayer,
+      history: this.state.history.filter((e, i) => i <= idx)
+    });
+  };
+
+  responseFacebook = response => {
+    console.log(response);
+    this.setState({user:response.name})
+  };
+
+  postData = async() => {
+    let data = new URLSearchParams();
+
+    data.append("player", this.state.user); // gonna be posted (key, value  )
+    data.append("score", 3);// gonna be posted {palyerName:  "PLAYER_NAME", score:  "TIME_ELAPSED_IN_SECONDS"}
+    const url = `http://ftw-highscores.herokuapp.com/tictactoe-dev`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: data.toString(),
+      json: true
+    });
+    this.showData();
   }
-  render(){
+ 
+  showData = async() => {
+    const url = `http://ftw-highscores.herokuapp.com/tictactoe-dev`;
+let result = await fetch(url);
+let resultData = await result.json();
+  }
+
+  restartGame=()=>{
+return <div>This button is not working!sorry</div>
+  }
+
+  render() {
+    if(!this.state.user){
+      return(
+        <div style={{display: "flex", justifyContent: "center", marginTop:"60px"}}>
+            <FacebookLogin
+        autoLoad={true}
+        appId="3529330857141012"
+        fields="name,email,picture"
+        callback={resp => this.responseFacebook(resp)}
+      />
+        </div>
+      )
+    }
+
+    
     return (
-      <div>
-   <h1>
-     tik tak tok
-     <Board {...this.state} setParentsState = {this.setParentsState}/>
-   </h1>   
-   </div>)
+      <div className="container" style={{marginTop: "60px"}}>
+        <div style={{ display: "flex" }}>
+
+          <div className="col-sm-4" style={{ display: "inline", justifyContent:"space-around", textAlign: "center" }}>
+          <h1 style={{ textAlign: "center", marginBottom: "30px" }}>TIC TAC TOE</h1>
+        <h2 style={{ marginTop: "60px", fontSize: "25px" }}>{this.state.user} is playing.</h2>
+        <Button
+                        style={{ marginTop: "40px" }}
+                        onClick={() => this.restartGame()}
+                        variant="outline-secondary"
+                      >RESTART
+                      </Button>
+          </div>
+      
+          <div className="col-sm-5" style={{ fontSize: "20px" }}>
+            {" "}
+            <Board {...this.state} setParentsState={this.setParentsState} postData={this.postData}/>
+          </div>
+
+          <div className="container col-sm-3">
+            <h3 style={{ fontSize: "20px" }}>HISTORY</h3>{" "}
+            <div
+              style={{
+                border: "3px solid #1F487E",
+                borderRadius: "5px",
+                minHeight: "450px",
+                maxWidth: "190px"
+              }}
+            >
+              <ul style={{ margin: "8px" }}>
+                {this.state.history.map((item, idx) => {
+                  return (
+                    <li>
+                      <Button
+                        style={{ margin: "4px" }}
+                        onClick={() => this.showHistory(item, idx)}
+                        variant="outline-secondary"
+                      >
+                        move #{idx + 1}
+                      </Button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 }
 

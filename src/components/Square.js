@@ -1,11 +1,26 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
+import { Button } from "react-bootstrap";
 
-export default class Square extends Component {
-    render() {
-        return (
-            <div onClick={()=>this.props.onClick()} style={{width: "200px", height: "200px", border: "2px solid green", fontSize: "20px"}}>
-                {this.props.value}
-            </div>
-        )
-    }
+class Square extends Component {
+  render() {
+    return (
+      <div>
+        <Button
+          onClick={() => this.props.onClick()}
+          style={{
+            width: "150px",
+            height: "150px",
+            fontSize: "50px",
+            border: "1px solid white",
+            backgroundColor: "#376996"
+          }}
+          variant="light"
+        >
+          {this.props.value}
+        </Button>
+      </div>
+    );
+  }
 }
+
+export default Square;
