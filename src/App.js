@@ -54,6 +54,7 @@ class App extends Component {
     const url = `http://ftw-highscores.herokuapp.com/tictactoe-dev`;
 let result = await fetch(url);
 let resultData = await result.json();
+console.log("user data" ,resultData.items)
   }
 
   restartGame=()=>{
