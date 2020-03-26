@@ -62,18 +62,18 @@ return <div>This button is not working!sorry</div>
   }
 
   render() {
-    if(!this.state.user){
-      return(
-        <div style={{display: "flex", justifyContent: "center", marginTop:"60px"}}>
-            <FacebookLogin
-        autoLoad={true}
-        appId="3529330857141012"
-        fields="name,email,picture"
-        callback={resp => this.responseFacebook(resp)}
-      />
-        </div>
-      )
-    }
+    // if(!this.state.user){
+    //   return(
+    //     <div style={{display: "flex", justifyContent: "center", marginTop:"60px"}}>
+    //         <FacebookLogin
+    //     autoLoad={true}
+    //     appId="3529330857141012"
+    //     fields="name,email,picture"
+    //     callback={resp => this.responseFacebook(resp)}
+    //   />
+    //     </div>
+    //   )
+    // }
 
     
     return (
