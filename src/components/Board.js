@@ -47,7 +47,7 @@ class Board extends Component {
     let status = "";
     let winner = this.findWinner();
     if (winner) {
-      this.props.postData();
+      this.props.postData("An ne");
        status = `Player ${winner} Won, CAN NOT RESTART!` ;
        return  <div> {status} 
        </div>
