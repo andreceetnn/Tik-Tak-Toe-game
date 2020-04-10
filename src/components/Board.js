@@ -1,7 +1,16 @@
 import React, { Component } from "react";
 import Square from "./Square";
+//score logic
+//1.when we click the 1st square, time starts
+let startTime = 0;
+let gameOver = false;
+
 class Board extends Component {
   clickSquare = i => {
+    if (startTime == 0) {
+      // it will check if this is the first time you click the square
+      startTime = Date.now();
+    }
     // let isClicked = true;
     console.log("box number:", i);
     // 1.make a new copy arr from the default list
@@ -46,14 +55,21 @@ class Board extends Component {
   render() {
     let status = "";
     let winner = this.findWinner();
-    if (winner) {
-      this.props.postData("An ne");
-       status = `Player ${winner} Won, CAN NOT RESTART!` ;
-       return  <div> {status} 
-       </div>
+
+    if (gameOver) {
+      status = `GAME OVER!` ;
     } else {
-      status = this.props.nextPlayer ? "Next Player: O" : "Next Player: X";
+      if (winner) {
+        let duration = Date.now() - startTime;
+        this.props.postData(duration);
+        gameOver=true;
+        status = ` WINNER: ${winner}`;
+        return <div> {status}</div>;
+      } else {
+        status = this.props.nextPlayer ? "Next Player: O" : "Next Player: X";
+      }
     }
+
     return (
       <div>
         <h5>{status}</h5>

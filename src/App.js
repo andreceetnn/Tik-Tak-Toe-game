@@ -12,7 +12,8 @@ class App extends Component {
       squares: ["", "", "", "", "", "", "", "", ""],
       nextPlayer: false,
       history: [],
-      user:''
+      user: "",
+      topRank: []
     };
   }
 
@@ -30,14 +31,14 @@ class App extends Component {
 
   responseFacebook = response => {
     console.log(response);
-    this.setState({user:response.name})
+    this.setState({ user: response.name });
   };
 
-  postData = async() => {
+  postData = async duration => {
     let data = new URLSearchParams();
 
-    data.append("player", this.state.user); // gonna be posted (key, value  )
-    data.append("score", 3);// gonna be posted {palyerName:  "PLAYER_NAME", score:  "TIME_ELAPSED_IN_SECONDS"}
+    data.append("player", this.state.user); 
+    data.append("score", duration);
     const url = `http://ftw-highscores.herokuapp.com/tictactoe-dev`;
     const response = await fetch(url, {
       method: "POST",
@@ -48,18 +49,24 @@ class App extends Component {
       json: true
     });
     this.showData();
-  }
- 
-  showData = async() => {
-    const url = `http://ftw-highscores.herokuapp.com/tictactoe-dev`;
-let result = await fetch(url);
-let resultData = await result.json();
-console.log("user data" ,resultData.items)
-  }
+  };
 
-  restartGame=()=>{
-return <div>This button is not working!sorry</div>
-  }
+  showData = async () => {
+    const url = `http://ftw-highscores.herokuapp.com/tictactoe-dev`;
+    let result = await fetch(url);
+    let resultData = await result.json();
+    this.setState({ topRank: resultData.items });
+  };
+
+  restartGame = () => {
+    // this.getData();
+    this.setState({
+      squares: ['', '', '', '', '', '', '', '', ''],
+      nextPlayer: true,
+      history: [],
+
+    });
+  };
 
   render() {
     // if(!this.state.user){
@@ -75,25 +82,50 @@ return <div>This button is not working!sorry</div>
     //   )
     // }
 
-    
     return (
-      <div className="container" style={{marginTop: "60px"}}>
+      <div className="container" style={{ marginTop: "60px" }}>
         <div style={{ display: "flex" }}>
-
-          <div className="col-sm-4" style={{ display: "inline", justifyContent:"space-around", textAlign: "center" }}>
-          <h1 style={{ textAlign: "center", marginBottom: "30px" }}>TIC TAC TOE</h1>
-        <h2 style={{ marginTop: "60px", fontSize: "25px" }}>{this.state.user} is playing.</h2>
-        <Button
-                        style={{ marginTop: "40px" }}
-                        onClick={() => this.restartGame()}
-                        variant="outline-secondary"
-                      >RESTART
-                      </Button>
+          <div
+            className="col-sm-4"
+            style={{
+              display: "inline",
+              justifyContent: "space-around",
+              textAlign: "center"
+            }}
+          >
+            <h1 style={{ textAlign: "center", marginBottom: "30px" }}>
+              TIC TAC TOE
+            </h1>
+            <h2 style={{ marginTop: "60px", fontSize: "25px" }}>
+              {this.state.user} playing
+            </h2>
+            <Button
+              style={{ marginTop: "40px" }}
+              onClick={() => this.restartGame()}
+              variant="outline-secondary"
+            >
+              RESTART
+            </Button>
+            <ol>
+              TOP SCORE{" "}
+              {
+              this.state.topRank.map(item => {
+                return (
+                  <li>
+                    {item.player}:{item.score}
+                  </li>
+                );
+              })}{" "}
+            </ol>
           </div>
-      
+
           <div className="col-sm-5" style={{ fontSize: "20px" }}>
             {" "}
-            <Board {...this.state} setParentsState={this.setParentsState} postData={this.postData}/>
+            <Board
+              {...this.state}
+              setParentsState={this.setParentsState}
+              postData={this.postData}
+            />
           </div>
 
           <div className="container col-sm-3">
